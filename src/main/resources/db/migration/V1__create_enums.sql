@@ -1,0 +1,2 @@
+CREATE TYPE transaction_type AS ENUM ('INCOME', 'EXPENSE');
+CREATE TYPE recurrence_type AS ENUM ('DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY');
