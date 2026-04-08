@@ -53,11 +53,8 @@ public class RecurringTransaction {
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
-    @Column(name = "end_date")
-    private LocalDate endDate;
-
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive;
+    @Column(nullable = false)
+    private Short occurrences;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -69,13 +66,10 @@ public class RecurringTransaction {
     void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        if (this.isActive == null) this.isActive = true;
     }
 
     @PreUpdate
     void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-
-
 }

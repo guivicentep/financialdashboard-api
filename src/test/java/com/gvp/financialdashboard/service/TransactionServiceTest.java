@@ -326,6 +326,6 @@ class TransactionServiceTest {
         assertThatThrownBy(() -> transactionService.delete(transactionId, user.getId()))
                 .isInstanceOf(BusinessException.class);
 
-        verify(transactionRepository, never()).delete(any());
+        verify(transactionRepository, never()).delete((Transaction) any());
     }
 }

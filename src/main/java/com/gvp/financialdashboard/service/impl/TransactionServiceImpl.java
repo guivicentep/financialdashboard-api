@@ -1,16 +1,22 @@
 package com.gvp.financialdashboard.service.impl;
 
 import com.gvp.financialdashboard.domain.dto.CreateTransactionRequest;
+import com.gvp.financialdashboard.domain.dto.TransactionFilterRequest;
 import com.gvp.financialdashboard.domain.dto.UpdateTransactionRequest;
 import com.gvp.financialdashboard.domain.entity.Transaction;
 import com.gvp.financialdashboard.exception.BusinessException;
 import com.gvp.financialdashboard.repository.CategoryRepository;
 import com.gvp.financialdashboard.repository.TransactionRepository;
 import com.gvp.financialdashboard.repository.UserRepository;
+import com.gvp.financialdashboard.repository.spec.TransactionSpecification;
 import com.gvp.financialdashboard.service.TransactionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -85,6 +91,31 @@ public class TransactionServiceImpl implements TransactionService {
             throw new BusinessException("Transação não encontrada");
         }
 
-        transactionRepository.delete(transaction);
+        ((org.springframework.data.repository.CrudRepository<Transaction, UUID>) transactionRepository)
+                .delete(transaction);
+    }
+
+    @Override
+    public List<Transaction> findAll(TransactionFilterRequest filter, UUID userId) {
+        var now =  LocalDate.now();
+        var month = filter.month() != null ? filter.month() : now.getMonthValue();
+        var year =  filter.year() != null ? filter.year() : now.getYear();
+
+        var spec = TransactionSpecification.withFilters(
+                userId,
+                month,
+                year,
+                filter.type(),
+                filter.categoryId(),
+                filter.amountOperator(),
+                filter.amount(),
+                filter.amountMin(),
+                filter.amountMax()
+        );
+
+        var orderBy = filter.orderBy() != null ? filter.orderBy() : "date";
+        var direction = "ASC".equalsIgnoreCase(filter.direction()) ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+        return transactionRepository.findAll(spec, Sort.by(direction, orderBy));
     }
 }
