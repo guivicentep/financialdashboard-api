@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -140,5 +141,13 @@ public class RecurringTransactionServiceImpl implements RecurringTransactionServ
         transactionRepository.saveAll(pastInstances);
 
         recurringTransactionRepository.delete(template);
+    }
+
+    @Override
+    public List<RecurringTransaction> findAll(UUID userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException("Usuário não encontrado"));
+
+        return recurringTransactionRepository.findByUserId(userId);
     }
 }

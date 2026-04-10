@@ -63,7 +63,7 @@ public class TransactionServiceImpl implements TransactionService {
             throw new BusinessException("Transação não encontrada");
         }
 
-        var category = categoryRepository.findById(request.cateogryId())
+        var category = categoryRepository.findById(request.categoryId())
                 .orElseThrow(() -> new BusinessException("Categoria não encontrada"));
 
         if (category.getType() != request.type()) {
